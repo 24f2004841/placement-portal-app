@@ -1,14 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MAD 1 Project</title>
-</head>
-<body>
-  <div style="width: 60%; margin: 0 auto;text-align: center;">
-    <h1>Hello, This is MAD 1 Project </h1>
-    <h3>made with &hearts; by {{name}}</h3>
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="mt-5">
+  <h1 class="mt-2 mb-4 fw-bold text-center">Welcome to Hirable</h1>
+  <div class="d-flex justify-content-center gap-4 mb-5">
+    <a href="{{ url_for('admin.admin_login') }}" class="btn btn-outline-primary">Admin Login</a>
+    <a href="{{ url_for('student.student_register') }}" class="btn btn-outline-primary">Student Registration</a>
+    <a href="{{ url_for('student.student_login') }}" class="btn btn-outline-primary">Student Login</a>
+
+    <br>
+
+    <a href="{{ url_for('company.company_register') }}" class="btn btn-outline-primary">Company Registration</a>
+    <a href="{{ url_for('company.company_login') }}" class="btn btn-outline-primary">Company Login</a>
   </div>
-</body>
-</html>
+
+  <!-- <img src="{{ url_for('static', filename='images/parking.jpg') }}" alt="Parking Image" class="img-fluid shadow"> -->
+
+  <footer class="text-center text-muted mt-5 mb-3">
+    &copy;Tejashvi Yadav. All rights reserved.<br>
+  </footer>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html %}
+
+{% block body %}
+
+<div class="text-center">
+  <h2>Admin Dashboard</h2>
+  {% if current_user.is_authenticated %}
+  Hi {{ current_user.name }}!
+  {% endif %}
+</div>
+
+
+{% endblock%}
