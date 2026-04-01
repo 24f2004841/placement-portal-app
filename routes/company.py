@@ -16,7 +16,7 @@ def company_register():
 
         # password_hash = generate_password_hash(password)
 
-        user = User(password_hash=password, username=username, role='company', status='active')
+        user = User(name=name, password_hash=password, username=username, role='company', status='active')
         db.session.add(user)
         db.session.flush()
 

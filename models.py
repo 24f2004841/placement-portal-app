@@ -1,4 +1,3 @@
-import enum
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
@@ -13,27 +12,11 @@ from datetime import datetime , timezone
 
 db = SQLAlchemy()
 
-class Drive_Status(enum.Enum):
-  Pending = "pending"
-  Approved = "approved"
-  Closed = "closed"
-
-class Application_Status(enum.Enum):
-  Applied = "applied"
-  Shortlisted = "shortlisted"
-  Selected = "selected"
-  Rejected = "rejected"
-
-class Company_Status(enum.Enum):
-  Pending = "pending"
-  Approved = "approved"
-  Closed = "closed"
-
-
 class User(db.Model, UserMixin):
   __tablename__ = "user"
   id = db.Column(db.Integer , primary_key= True)
   username = db.Column(db.String(20), unique = True, nullable = False)
+  name = db.Column(db.String(20), nullable=False)
   password_hash = db.Column(db.String(256), nullable = False)
   role = db.Column(db.String(10), nullable = False)
   status = db.Column(db.String(10), default='active')
@@ -58,19 +41,19 @@ class Company(db.Model):
   name = db.Column(db.String(20), nullable = False)
   hr_contact = db.Column(db.String(10) , nullable = False)
   website = db.Column(db.String(20), nullable=False)
+  status = db.Column(db.String(10), default='active')
 
-  status = db.Column(db.Enum(Company_Status), default=Company_Status.Pending)
 
 
 class Drive(db.Model):
   __tablename__ = "drive"
   id = db.Column(db.Integer , primary_key = True)
-  date = db.Column(db.DateTime, nullable = False , default = db.DateTime)
+  date = db.Column(db.DateTime, nullable = False , default = datetime.now(timezone.utc))
   title = db.Column(db.String(20), nullable = False)
   description = db.Column(db.String(10) , nullable = False)
   eligibility = db.Column(db.String(20), nullable=False)
   deadline = db.Column(db.DateTime, nullable=False)
-  status = db.Column(db.Enum(Drive_Status), default=Drive_Status.Pending)
+  status = db.Column(db.String(20), nullable=False, default='pending')
 
   company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
 
@@ -85,7 +68,7 @@ class Application(db.Model):
   description = db.Column(db.String(10) , nullable = False)
   date = db.Column(db.DateTime, nullable=False)
 
-  status = db.Column(db.Enum(Application_Status), default=Application_Status.Applied)
+  status = db.Column(db.String(20), nullable=False, default='pending')
   student = db.relationship('Student', backref='applications')
 
   __table_args__ = (db.UniqueConstraint('job_id', 'student_id', name='_job_student_uc'),)

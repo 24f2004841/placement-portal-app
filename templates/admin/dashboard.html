@@ -1,13 +1,137 @@
-{% extends 'base.html %}
+{% extends 'base.html' %}
 
 {% block body %}
 
-<div class="text-center">
-  <h2>Admin Dashboard</h2>
+<div>
+  <h2 class="p-3 font-weight-bold">Admin Dashboard</h2>
   {% if current_user.is_authenticated %}
-  Hi {{ current_user.name }}!
-  {% endif %}
+</div>
+  <div class="row mt-4">
+    <div class="col-8 ms-auto">
+       
+        <form method="GET" action="{{ url_for('admin.admin_dashboard') }}" class="d-flex">
+            <input type="text" name="q" class="form-control me-2" 
+                   placeholder="Search companies, students, or drives..." 
+                   value="{{ search_query }}">
+            
+            <button type="submit" class="btn btn-primary">Search</button>
+            
+            {% if search_query %}
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary ms-2">Clear</a>
+            {% endif %}
+        </form>
+    </div>
 </div>
 
+{% if search_query %}
+    <div class="alert alert-info">
+        Showing results for "<strong>{{ search_query }}</strong>"
+    </div>
+{% endif %}
 
-{% endblock%}
+<div class="container my-4">
+  <div class="row justify-content-between align-items-center">
+    <div class=" col-auto d-flex align-items-center my-3">
+      <button class="btn btn-danger fw-bold rounded ms-auto">
+        <a href="{{ url_for('admin.job_applications') }}" class="text-black">
+          <i class="fa fa-flag" aria-hidden="true"></i>
+          View all Job Applications
+        </a>
+      </button>
+    </div>
+    
+    <div class=" col-auto   my-3">
+      <button class="btn btn-outline-warning fw-bold rounded ms-auto">
+        <a href="{{ url_for('admin.admin_drive') }}" class="text-black">
+          <i class="fa fa-users" aria-hidden="true"></i>
+          Check all drives
+        </a>
+      </button>
+    </div>
+
+
+    <div class="text-center row justify-content-between align-items-center my-3">
+      <h2 class="text-center col-auto text-muted rounded p-1 mt-2">Approved Companies</h2>
+
+      <div class=" col-auto   my-3">
+      <button class="btn btn-warning fw-bold rounded ms-auto">
+        <a href="{{ url_for('admin.pending_companies') }}" class="text-black">
+          <i class="fa fa-hourglass-end" aria-hidden="true"></i>
+          View Pending Approvals
+        </a>
+      </button>
+    </div>
+      {% if companies %}
+      <table class="table table-striped border border-3 rounded">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Company Name</th>
+            <th>Website</th>
+            <th>HR Contact</th>
+            <th> Status </th>
+          </tr>
+        </thead>
+
+        {% for company in companies %}
+        <tbody>
+          <tr>
+            <td>{{ company.id }}</td>
+            <td>{{ company.name }}</td>
+            <td>{{ company.website }}</td>
+            <td>{{ company.hr_contact }}</td>
+            <td>{{ company.status }}</td>
+            <td>
+              <form action="{{ url_for('admin.admin_blacklist', com_id=company.id) }}" method="POST">
+                <button type="submit" class="btn btn-dark fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Blacklist
+                </button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+      {% endif %}
+
+      <!-- <h2 class="text-center fw-bold text-muted rounded p-1 mt-2">Students</h2>
+    {% if students %}
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Department</th>
+              <th>Skills</th>
+            </tr>
+          </thead>
+
+      {% for student in students %}
+          <tbody>
+            <tr>
+              <td>{{ student.user_id }}</td>
+              <td>{{ student.name }}</td>
+              <td>{{ student.age }}</td>
+              <td>{{ student.department }}</td>
+              <td>{{ student.skills }}</td>
+              <td>
+              <form action = "{{ url_for('admin.admin_blacklist', user_id=student.id) }}" method = "POST">
+                <button type= "submit" class="btn btn-dark fw-bold rounded" >
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                    Blacklist
+                </button>
+              </form>
+              </td>
+            </tr>
+          </tbody>
+      {% endfor %}
+        </table>
+    {% endif %}
+     -->
+      {% endif %}
+    </div>
+
+
+    {% endblock%}

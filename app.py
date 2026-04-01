@@ -1,6 +1,7 @@
 from flask import Flask , render_template
 from flask_login import LoginManager
 from models import db, User
+from seed import create_db
 
 from routes.admin import admin_routes
 from routes.student import student_routes
@@ -31,7 +32,7 @@ def load_user(user_id):
 
 def create_admin():
   print("Adding Admin...")
-  admin = User(username='admin@mail.com', password_hash= 12345, role='admin', status='active')
+  admin = User(name='admin', username='admin@mail.com', password_hash= 12345, role='admin', status='active')
   db.session.add(admin)
   db.session.commit()
 
@@ -39,6 +40,7 @@ def create_admin():
 if __name__ == "__main__":
   with app.app_context():
     db.create_all()
+    create_db()
     if not User.query.filter_by(username='admin@mail.com').first():
       create_admin()
   app.run(debug = True)

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block body%}
+
+<div class="text-center">
+  {% if current_user.is_authenticated %}
+    
+
+<div class="text-center">
+  <h2 class="text-center fw-bold text-muted rounded p-1 mt-2">Pending Companies</h2>
+    {% if companies %}
+        <table class="table table-striped border border-3 rounded">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Company Name</th>
+              <th>Website</th>
+              <th>HR Contact</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+      {% for company in companies %}
+          <tbody>
+            <tr>
+              <td>{{ company.id }}</td>
+              <td>{{ company.name }}</td>
+              <td>{{ company.website }}</td>
+              <td>{{ company.hr_contact }}</td>
+              <td>{{ company.status }}</td>
+              <td>
+              <form action = "{{ url_for('admin.approve_company', user_id=company.id) }}" method = "POST">
+                <button type= "submit" class="btn btn-success fw-bold rounded" >
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                    Approve
+                </button>
+              </form>
+              </td>
+              <td>
+              <form action = "{{ url_for('admin.reject_company', user_id=company.id) }}" method = "POST">
+                <button type= "submit" class="btn btn-danger fw-bold rounded" >
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                    Reject
+                </button>
+              </form>
+              </td>
+            </tr>
+          </tbody>
+      {% endfor %}
+        </table>
+    {% endif %}
+
+  {% endif %}
+</div>
+
+{% endblock %}

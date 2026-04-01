@@ -15,7 +15,7 @@ def student_register():
         department = request.form['Department']
         skills = request.form['Skills']
 
-        new_user = User(username=username, password_hash=password, role='student', status='active')
+        new_user = User(name=name, username=username, password_hash=password, role='student', status='active')
         db.session.add(new_user)
         db.session.flush()
 

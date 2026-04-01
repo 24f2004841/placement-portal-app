@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block body%}
+
+<div class="text-center">
+  <h2 class="my-4 fs-1 fw-bold mb-5">All Drives</h2>
+  {% if current_user.is_authenticated %}
+  <h2> Pending Drives </h2>
+     {% if pending_drives %}
+      <table class="table table-striped border border-3 rounded my-3">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title </th>
+            <th>Eligibility</th>
+            <th>Deadline</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+
+        {% for drive in pending_drives %}
+        <tbody>
+          <tr>
+            <td>{{ drive.id }}</td>
+            <td>{{ drive.title }}</td>
+            <td>{{ drive.eligibility }}</td>
+            <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p')  }}</td>
+            <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p') }}</td>
+            <td>
+              <form action="{{ url_for('admin.approve_drive', drive_id=drive.id) }}" method="POST">
+                <button type="submit" class="btn btn-success fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Approve
+                </button>
+              </form>
+            </td>
+            <td>
+              <form action="{{ url_for('admin.reject_drive', drive_id=drive.id) }}" method="POST">
+                <button type="submit" class="btn btn-danger fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Reject
+                </button>
+              </form>
+            </td>
+
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+      {% endif %}
+
+  <h2> Ongoing Drives </h2>
+     {% if ongoing_drives %}
+      <table class="table table-striped border border-3 rounded my-3">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title </th>
+            <th>Eligibility</th>
+            <th>Deadline</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+
+        {% for drive in ongoing_drives %}
+        <tbody>
+          <tr>
+            <td>{{ drive.id }}</td>
+            <td>{{ drive.title }}</td>
+            <td>{{ drive.eligibility }}</td>
+            <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p')  }}</td>
+            <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p')  }}</td>
+            <td>
+              <form action="{{ url_for('admin.delete_drive', drive_id=drive.id) }}" method="POST">
+                <button type="submit" class="btn btn-dark fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Delete
+                </button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+      {% endif %}
+  {% endif %}
+</div>
+
+{% endblock %}
