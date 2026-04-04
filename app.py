@@ -7,7 +7,7 @@ from routes.admin import admin_routes
 from routes.student import student_routes
 from routes.company import company
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='assets')
 login_manager = LoginManager()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite3'

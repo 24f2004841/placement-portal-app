@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="text-center container my-3">
+  {% if drive_detail and applications %}
+  <h2>{{ drive_detail.title }} <span class="fw-bold text-primary">( {{ drive_detail.status }} )</span></h2>
+  <hr>
+  <h4 class="fw-bold pb-2">Received Applications</h4>
+  <table class="table table-striped border border-3 rounded p-2">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Skills</th>
+        <th>View Application</th>
+      </tr>
+    </thead>
+
+    {% for application in applications %}
+    <tbody>
+      <tr>
+        <td>{{ application.student.name }}</td>
+        <td>{{ application.student.department }}</td>
+        <td>{{ application.student.skills }}</td>
+        <td>
+          <form action="{{ url_for('company.company_view_application', drive_id=drive_detail.id, application_id=application.id) }}"
+            method="POST">
+            <button type="submit" class="btn btn-success fw-bold rounded">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              View
+            </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+  {% endif %}
+</div>
+{% endblock %}

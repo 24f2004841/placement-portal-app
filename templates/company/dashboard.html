@@ -3,10 +3,115 @@
 {% block body%}
 
 <div class="text-center">
-  <h2>Company Dashboard</h2>
+  <h2 class="text-center mb-4 p-4">Company Dashboard</h2>
   {% if current_user.is_authenticated %}
-    Hi {{ current_user.name }}!
-  {% endif %}
-</div>
 
-{% endblock %}
+  <div class="container my-4">
+    <div class="row justify-content-between align-items-center">
+      <div class=" col-auto d-flex align-items-center my-3">
+        <button class="btn btn-success fw-bold rounded ms-auto">
+          <a href="{{ url_for('company.new_drive') }}" class="text-white">
+            <i class="fa fa-flag" aria-hidden="true"></i>
+            New Drive
+          </a>
+        </button>
+      </div>
+
+
+      <div class="container my-4">
+        <div class="fw-bold fs-1">Ongoing Drives</div>
+        <table class="table table-striped border border-3 rounded">
+          <thead>
+            <tr>
+              <td>ID</td>
+              <td>Title</td>
+              <td>Company Name</td>
+              <td>Salary</td>
+              <td>Deadline</td>
+            </tr>
+          </thead>
+          {% if active_drive %}
+          {% for drive1 in active_drive %}
+          <tr>
+            <td>{{ drive1.id}}</td>
+            <td>{{ drive1.title}}</td>
+            <td>{{ drive1.company_drive.name }}</td>
+            <td>{{ drive1.salary }}</td>
+            <td>{{ drive1.deadline.strftime('%d %b %Y, %I:%M %p')}}</td>
+            <td>
+              <form action="{{ url_for('company.company_drive', drive_no=drive1.id) }}" method="POST">
+                <button type="submit" class="btn btn-success fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  View
+                </button>
+              </form>
+            </td>
+            <td>
+              <form action="{{ url_for('company.company_drive_close', drive_no=drive1.id) }}" method="POST">
+                <button type="submit" class="btn btn-warning fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Close
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="5" class="m-2 p-3 text-center fs-3 fw-bolder">No Data to show</td>
+          </tr>
+          {% endif %}
+        </table>
+      </div>
+
+      <div class="container my-4">
+        <div class="fw-bold fs-1">Pending Drives</div>
+        <table class="table table-striped border border-3 rounded">
+          <thead>
+            <tr>
+              <td>ID</td>
+              <td>Title</td>
+              <td>Company Name</td>
+              <td>Salary</td>
+              <td>Deadline</td>
+            </tr>
+          </thead>
+          {% if pending_drive %}
+
+          {% for drive2 in pending_drive %}
+          <tr>
+            <td>{{ drive2.id}}</td>
+            <td>{{ drive2.title}}</td>
+            <td>{{ drive2.company_drive.name}}</td>
+            <td>{{ drive2.salary }}</td>
+            <td>{{ drive2.deadline.strftime('%d %b %Y, %I:%M %p')}}</td>
+            <td>
+              <form action="{{ url_for('company.company_drive', drive_no=drive2.id) }}" method="POST">
+                <button type="submit" class="btn btn-success fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  View
+                </button>
+              </form>
+            </td>
+            <td>
+              <form action="{{ url_for('company.company_drive_close', drive_no=drive2.id) }}" method="POST">
+                <button type="submit" class="btn btn-warning fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Close
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="5" class="m-2 p-3 text-center fs-3 fw-bolder">No Data to show</td>
+          </tr>
+          {% endif %}
+        </table>
+      </div>
+
+      {% endif %}
+    </div>
+
+    {% endblock %}

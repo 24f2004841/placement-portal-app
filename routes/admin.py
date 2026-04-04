@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, Blueprint, flash
-from models import db, User, Student, Company, Drive, Job
+from models import db, User, Student, Company, Drive
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash , check_password_hash
 from sqlalchemy import or_, String, cast
@@ -37,7 +37,6 @@ def admin_dashboard():
     stats = {
         'cc': User.query.filter_by(role='company').count(),
         'sc': User.query.filter_by(role='student').count(),
-        'jc': Job.query.count(),
         'cb': User.query.filter_by(role='company', status='blacklisted').count(),
         'sb': User.query.filter_by(role='student', status='blacklisted').count(),
         'cp': User.query.filter_by(role='company', status='pending').count(),

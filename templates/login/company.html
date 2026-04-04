@@ -6,11 +6,13 @@
 {% block body %}
 
 <div class="centered-form">
-    <h2 class="text-center mb-4">Company Login</h2>
+<div class="row justify-content-center">
+<div class="col-md-4">
+    <h2 class="text-center mb-4 p-4">Company Login</h2>
     <form method="post">
         <div class="mb-3">
             <label for="username" class="form-label">Username(email)</label>
-            <input id="username" type="email" class="form-control" name="Username"
+            <input id="username" class="form-control" name="Username"
                  autofocus required>
         </div>
         <div class="mb-3">
@@ -31,6 +33,7 @@
         For Admin login <a href="{{ url_for('admin.admin_login') }}" style="text-decoration: none;">Click here</a>
     </p>
 </div>
-
+</div>
+</div>
 
 {% endblock %}

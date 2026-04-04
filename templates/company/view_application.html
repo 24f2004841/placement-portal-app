@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="container my-3">
+  {% if student_detail %}
+
+  <h2 class="text-center mb-4 p-4">Student Application</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="row">
+        <div class="col-md-6">
+          <p><span class="fw-bold">Student Name:</span> {{ student_detail.name }}</p>
+          <p><span class="fw-bold">Department:</span> {{ student_detail.department }}</p>
+          <p><span class="fw-bold">Skills:</span> {{ student_detail.skills }}</p>
+
+          {% if application %}
+          <p><span class="fw-bold">Drive:</span> {{ application.drive_id }}</p>
+          <p><span class="fw-bold">Status:</span> {{ application.status }}</p>
+          {% endif %}
+        </div>
+        <div class="col-md-6 text-center">
+          <img src="{{ url_for('static', filename='student.png') }}" alt="student photo" width="200">
+        </div>
+      </div>
+
+      {% if application %}
+      <div class="my-3">
+        <form action="{{ url_for('company.update_application_status', application_id=application.id) }}" method="POST">
+          <select name="Status" class="form-select d-inline-block w-auto">
+            <option value="shortlist" {% if application.status=='shortlist' %}selected{% endif %}>Shortlist</option>
+            <option value="pending" {% if application.status=='pending' %}selected{% endif %}>Waiting</option>
+            <option value="reject" {% if application.status=='reject' %}selected{% endif %}>Reject</option>
+          </select>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+      </div>
+      {% endif %}
+
+      <div class="mt-4">
+        <button class="btn btn-secondary" onclick="history.back()">Back</button>
+      </div>
+
+    </div>
+  </div>
+
+  {% else %}
+  <p class="text-center fs-4 fw-bold">No student data found.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
