@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="centered-form">
+  <h2 class="text-center mb-4">Edit Profile</h2>
+  <form method="post">
+    <div class="mb-3">
+      <label for="age" class="form-label">Age</label>
+      <select id="age" name="Age" class="form-select" required>
+        <option value="" disabled selected>Select your age</option>
+        {% for age in range(18, 100) %}
+        <option value="{{ age }}">{{ age }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="department" class="form-label">Department</label>
+      <input id="department" type="text" class="form-control" name="Department" required>
+    </div>
+    <div class="mb-3">
+      <label for="skills" class="form-label">Skills</label>
+      <textarea id="skills" class="form-control" name="Skills" rows="2"
+        placeholder="e.g. Python, Java, SQL"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</div>
+
+{% endblock %}

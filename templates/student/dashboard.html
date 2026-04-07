@@ -3,10 +3,74 @@
 {% block body%}
 
 <div class="text-center">
-  <h2>Student Dashboard</h2>
   {% if current_user.is_authenticated %}
-    Hi {{ current_user.name }}!
+  <div class="flex">
+    <div class="d-flex align-items-center p-3">
+      <h2 class="d-flex justify-content-start">Welcome {{ current_user.name }}! </h2>
+      <div class="d-flex justify-content-end align-items-center ms-auto">
+        <a href="{{ url_for('student.edit_profile')}}"
+          class="p-2 m-2 border border-2 rounded btn-outline-primary">Edit Profile</a>
+        <a href="{{ url_for('student.student_history', stu_id=current_user.id)}}"
+          class="p-2 m-2 border border-2 rounded btn-outline-primary">History</a>
+        <a href="{{ url_for('student.logout')}}" class="p-2 m-2 border border-2 rounded btn-outline-primary">Logout</a>
+      </div>
+    </div>
+
+    {% if companies %}
+    <table class="container-sm table table-striped border border-3 rounded">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+
+      {% for company in companies %}
+      <tbody>
+        <tr>
+          <td>{{ company.name }}</td>
+          <td>{{ company.website }}</td>
+          <td>
+            <form action="{{ url_for('student.view_drives', com_id=company.id) }}" method="POST">
+              <button type="submit" class="btn btn-success fw-bold rounded">
+                <i class="fa fa-ban" aria-hidden="true"></i>
+                View
+              </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+    {% endif %}
+
+
+    <table class="container-sm table table-striped border border-3 rounded">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Deadline</th>
+        </tr>
+      </thead>
+      {% if app_drives %}
+      {% for drive in app_drives %}
+      <tbody>
+        <tr>
+          <td>{{ drive.drive.id }}</td>
+          <td>{{ drive.drive.title }}</td>
+          <td>{{ drive.drive.status }}</td>
+          <td>{{ drive.drive.deadline.strftime('%d %b %Y, %I:%M %p') }}</td>
+        </tr>
+      </tbody>
+      {% endfor %}
+      {% else %}
+      <h2 class="fw-bold ">No Data to Show</h2>
+    </table>
+    {% endif %}
+
+  </div>
   {% endif %}
 </div>
-
 {% endblock %}

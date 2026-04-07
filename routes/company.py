@@ -16,14 +16,12 @@ def company_register():
         password = request.form['Password']
         website = request.form['Website']
 
-        # password_hash = generate_password_hash(password)
-
         user = User(name=name, password_hash=password, username=username, role='company', status='active')
         db.session.add(user)
         db.session.flush()
 
         user_id = User.query.filter_by(username=username).first().id
-        company = Company(user_id=user_id, name=name, hr_contact=hr_contact, website=website )
+        db.session.add(Company(user_id=user_id, name=name, hr_contact=hr_contact, website=website ))
 
         db.session.commit()
         flash(f'Account created for {name} with Username {username}!', 'success')
@@ -135,16 +133,14 @@ def update_application_status(application_id):
 @login_required
 def new_drive():
     if request.method == 'POST':
-
         if current_user.role == 'company':
-
             if current_user.status == 'active':
 
                 title = request.form['Title']
                 description = request.form['Description']
                 eligibility = request.form['Eligibility'].strip().lower()
                 duration = int(request.form['Duration'])
-                salary = int(request.args.get['Salary'])
+                salary = int(request.form['Salary'])
 
                 now = datetime.now(timezone.utc)
                 new_drive = Drive(title=title, description=description,eligibility=eligibility,salary=salary,deadline= now + timedelta(days=duration), company_id=current_user.id)

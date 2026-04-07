@@ -4,7 +4,8 @@
 
 {% block body %}
 
-<div class="centered-form">
+<div class="centered-form  row justify-content-center">
+  <div class="col-md-4">
   <h2 class="text-center mb-4">Student Registration</h2>
   <form method="post" onsubmit="return validatePasswords();">
 
@@ -42,8 +43,6 @@
       <input id="password" type="password" class="form-control" name="Password"
         title="Password must be 8-12 characters long with atleast 1 num, and 1 uppercase and 1 lowercase alphabet."
         required>
-      <input type="checkbox" class="form-check-input" id="showPassword" onclick="togglePassword()">
-      <label class="form-check-label" for="showPassword">Show Password</label>
     </div>
     <div class="mb-3">
       <label for="confirm_password" class="form-label">Confirm Password</label>
@@ -55,6 +54,7 @@
   <p class="mt-3 text-center">
     Already have an account? <a href="{{ url_for('student.student_login') }}" style="text-decoration: none;">Login</a>
   </p>
+  </div>
 </div>
 
 <script>
@@ -71,12 +71,6 @@
       return true;
     }
   }
-
-  function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
-  }
-
   confirmPassword.addEventListener("input", () => {
     if (password.value == confirmPassword.value) {
       error.style.display = "none";

@@ -3,13 +3,13 @@
 {% block body%}
 
 <div class="text-center">
-  <h2 class="text-center mb-4 p-4">Company Dashboard</h2>
+  <h2 class="text-center mb-4 p-4 fw-bold fs-1">Company Dashboard</h2>
   {% if current_user.is_authenticated %}
 
   <div class="container my-4">
     <div class="row justify-content-between align-items-center">
-      <div class=" col-auto d-flex align-items-center my-3">
-        <button class="btn btn-success fw-bold rounded ms-auto">
+      <div class=" col-auto d-flex align-items-center justify-content-end">
+        <button class="btn btn-success fw-bold rounded">
           <a href="{{ url_for('company.new_drive') }}" class="text-white">
             <i class="fa fa-flag" aria-hidden="true"></i>
             New Drive
@@ -18,7 +18,7 @@
       </div>
 
 
-      <div class="container my-4">
+      <div class="container ">
         <div class="fw-bold fs-1">Ongoing Drives</div>
         <table class="table table-striped border border-3 rounded">
           <thead>
@@ -82,7 +82,7 @@
           <tr>
             <td>{{ drive2.id}}</td>
             <td>{{ drive2.title}}</td>
-            <td>{{ drive2.company_drive.name}}</td>
+            <td>{{ drive2.company.name}}</td>
             <td>{{ drive2.salary }}</td>
             <td>{{ drive2.deadline.strftime('%d %b %Y, %I:%M %p')}}</td>
             <td>

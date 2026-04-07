@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, Blueprint, flash
-from models import db, User, Student, Company, Drive
+from models import db, User, Student, Company, Drive, Application
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash , check_password_hash
 from sqlalchemy import or_, String, cast
@@ -76,10 +76,44 @@ def admin_dashboard():
 
 @admin_routes.route('/job_applications', methods=['GET', 'POST'])
 def job_applications():
+  if current_user.role == 'admin':
+
+    applications = Applications.query.all()
+
+    return render_template('admin/job_applications.html', applications=applications)
+
+  else:
+    flash('You are authorized to access this page', 'danger')
+    return redirect(url_for('app'))
+
+@admin_routes.route('/approve_job_application/<int:app_id>', methods=['GET', 'POST'])
+def approve_job_application(app_id):
+  if current_user.role == 'admin':
+
+      app = Application.query.get(app_id)
+      app.status = 'accepted'
+      db.session.commit()
 
 
-  return render_template('admin/job_applications.html')
+      return render_template('admin/job_applications.html')
 
+  else:
+    flash('You are authorized to access this page', 'danger')
+    return redirect(url_for('app'))
+
+@admin_routes.route('/reject_job_application/<int:app_id>', methods=['GET','POST'])
+def reject_job_application(app_id):
+  if current_user.role == 'admin':
+
+    app = Application.query.get(app_id)
+    app.status = 'rejected'
+    db.session.commit()
+
+    return render_template('admin/job_applications.html')
+
+  else:
+    flash('You are authorized to access this page', 'danger')
+    return redirect(url_for('app'))
 
 @admin_routes.route('/pending_companies', methods=['GET', 'POST'])
 def pending_companies():
@@ -96,8 +130,8 @@ def pending_companies():
 @admin_routes.route('/approve_company/<int:user_id>', methods=['POST'])
 def approve_company(user_id):
   if current_user.role == 'admin':
-    user = User.query.get(user_id)
-    user.status = 'approved'
+    user = Company.query.get(user_id)
+    user.status = 'active'
     db.session.commit()
 
     return redirect(url_for("admin.pending_companies"))
@@ -110,7 +144,7 @@ def approve_company(user_id):
 @admin_routes.route('/reject_company/<int:user_id>', methods=['POST'])
 def reject_company(user_id):
   if current_user.role == 'admin':
-    user = User.query.get(user_id)
+    user = Company.query.get(user_id)
     user.status = 'blacklist'
     db.session.commit()
 
@@ -171,7 +205,7 @@ def admin_blacklist(com_id):
     if current_user.role == 'admin':
         # user = User.query.get(user_id)
         company = Company.query.get(com_id)
-        company.status = 'blacklisted'
+        company.status = 'blacklist'
         # user.status = 'blacklisted'
 
         db.session.commit()

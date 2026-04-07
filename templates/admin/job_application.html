@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if current_user.is_authenticated %}
+
+<h2 class="d-flex justify-content-center fw-bold fs-2">Job applications </h2>
+   
+  <table class="table table-striped border border-3 rounded">
+    <thead>
+      <tr>
+        <td>ID</td>
+        <td>Student Name</td>
+        <td>Department</td>
+        <td>Eligibility</td>
+        <td>Applied to</td>
+      </tr>
+    </thead>
+  {% if applications %}
+    {% for app in applications %}
+      <tbody>
+        <tr>
+          <td>{{ app.id }}</td>
+          <td>{{ app.student.name }} </td>
+          <td>{{ app.student.department }}</td>
+          <td>{{ app.student.eligibility }}</td>
+          <td>{{ app.drive.title }}</td>
+          <td>
+            <form action="{{ url_for('admin.approve_job_application', app_id=app.id) }}" method="POST">
+                <button type="submit" class="btn btn-success fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Approve
+                </button>
+              </form>
+          </td>
+          <td>
+            <form action="{{ url_for('admin.reject_job_application', app_id=app.id) }}" method="POST">
+                <button type="submit" class="btn btn-danger fw-bold rounded">
+                  <i class="fa fa-ban" aria-hidden="true"></i>
+                  Reject
+                </button>
+              </form>
+          </td>
+        </tr>
+      </tbody>
+    {% endfor %}
+  {% else %}
+    <h2 class="fw-bold fs-2">No Data to Show</h2>
+  </table>
+{% endif %}
+{% endblock %}

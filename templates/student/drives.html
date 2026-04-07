@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+{% if current_user.is_authenticated %}
+{% if drives %}
+<nav class="m-2 mb-2 d-flex align-items-center">
+  <h2 class="d-flex justify-content-start">{{ company.name }} Drives </h2>
+  <div class="d-flex justify-content-end align-items-center ms-auto">
+    <div class="p-2 m-2 border border-2 rounded">History</div>
+    <div class="p-2 m-2 border border-2 rounded">Logout</div>
+  </div>
+</nav>
+
+<div>
+  <h2 class="fw-bold fs-2">Current Drives</h2>
+  <table class="container-sm table table-striped border border-3 rounded">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Eligibility</th>
+      </tr>
+    </thead>
+
+    {% for drive in drives %}
+    <tbody>
+      <tr>
+        <td>{{ drive.title }}</td>
+        <td>{{ drive.eligibility }}</td>
+        <td>
+          <form action="{{ url_for('student.view_drive', drive_id=drive.id) }}" method="POST">
+            <button type="submit" class="btn btn-success fw-bold rounded">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              View Details
+            </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+</div>
+
+{% else %}
+<h1 class="m-3 fw-bold"> No Data to Show </h1>
+{% endif%}
+{% endif%}
+{% endblock %}

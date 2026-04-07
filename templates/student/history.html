@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if current_user.is_authenticated %}
+
+<body class="bg-light d-flex justify-content-center align-items-center min-vh-100">
+
+  <div class="bg-white border rounded p-4 shadow-sm" style="width: 520px;">
+
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <h5 class="fw-bold mb-0">Student Application History</h5>
+      <button class="btn btn-outline-secondary btn-sm">back</button>
+    </div>
+    {% if applications %}
+    <p class="mb-1 small">{{ applications.student.name }}</p>   
+    <p class="mb-3 small">{{ applications.student.department }}</p>
+
+    <table class="table table-bordered text-center small mb-2">
+      <thead>
+        <tr>
+          <th>Drive No.</th>
+          <th>Interview</th>
+          <th>Job Title</th>
+          <th>Results</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+      {% for app in applications %}
+      <tbody>
+        <tr>
+          <td>{{ app.drive_id }}</td>
+          <td>{{ app.title }}</td>
+          <td>{{ app.description }}</td>
+          <td>{{ app.status }}</td>
+          <td>{{ app.date.strftime('%d %b %Y, %I:%M %p') }}</td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+
+    <div class="text-center text-muted">&#8942;</div>
+
+
+    {% else %}
+    <h1 class="m-3 fw-bold"> No Data to Show </h1>
+  </div>
+</body>
+{% endif %}
+{% endif %}
+{% endblock %}

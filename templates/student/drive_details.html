@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if current_user.is_authenticated %}
+
+{% if drive_detail %}
+<div class="fw-bold fs-1 mb-4 m-2">
+  {{ drive_detail.title }}
+</div>
+
+<div class="fs-2 p-2">
+ {{ drive_detail.description }}
+</div>
+
+{% else %}
+  <h1 class="m-3 fw-bold">No Data to Show</h1>
+{% endif %}
+{% endif %}
+{% endblock %}
