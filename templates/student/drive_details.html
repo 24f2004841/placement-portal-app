@@ -4,16 +4,78 @@
 {% if current_user.is_authenticated %}
 
 {% if drive_detail %}
-<div class="fw-bold fs-1 mb-4 m-2">
-  {{ drive_detail.title }}
-</div>
+<div class="container my-4 text-center">
 
-<div class="fs-2 p-2">
- {{ drive_detail.description }}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">{{ drive_detail.title }}</h2>
+    <span class="badge 
+      {% if drive_detail.status == 'active' %}bg-success
+      {% elif drive_detail.status == 'pending' %}bg-warning text-dark
+      {% else %}bg-secondary{% endif %} fs-6">
+      {{ drive_detail.status | capitalize }}
+    </span>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title text-muted mb-3">
+            <i class="fa fa-briefcase me-2"></i>Job Details
+          </h5>
+          <hr>
+
+          <div class="mb-3">
+            <strong>Description</strong>
+            <p class="mt-1">{{ drive_detail.description }}</p>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong><i class="fa fa-money me-1"></i> Salary</strong>
+              <p class="mt-1 fs-5 fw-bold text-success">₹ {{ drive_detail.salary }}</p>
+            </div>
+            <div class="col-6">
+              <strong><i class="fa fa-graduation-cap me-1"></i> Eligibility</strong>
+              <p class="mt-1">{{ drive_detail.eligibility }}</p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <strong><i class="fa fa-calendar me-1"></i> Posted On</strong>
+              <p class="mt-1">{{ drive_detail.date.strftime('%d %b %Y') }}</p>
+            </div>
+            <div class="col-6">
+              <strong><i class="fa fa-clock-o me-1"></i> Deadline</strong>
+              <p class="mt-1 text-danger fw-bold">{{ drive_detail.deadline.strftime('%d %b %Y, %I:%M %p') }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center gap-3 mt-4">
+    <form action="{{ url_for('student.student_apply', drive_id=drive_detail.id, stu_id=current_user.student.id)}}"
+      method="POST">
+      <button type="submit" class="btn btn-success fw-bold px-4 py-2">
+        <i class="fa fa-paper-plane me-1"></i> Apply
+      </button>
+    </form>
+    <a href="{{ url_for('student.student_dashboard') }}" class="btn btn-outline-secondary fw-bold px-4 py-2">
+      <i class="fa fa-arrow-left me-1"></i> Go Back
+    </a>
+  </div>
+
 </div>
 
 {% else %}
-  <h1 class="m-3 fw-bold">No Data to Show</h1>
+<div class="container my-5 text-center">
+  <h1 class="fw-bold text-muted">No Data to Show</h1>
+  <a href="{{ url_for('student.student_dashboard') }}" class="btn btn-outline-primary mt-3">Back to Dashboard</a>
+</div>
 {% endif %}
+
 {% endif %}
 {% endblock %}

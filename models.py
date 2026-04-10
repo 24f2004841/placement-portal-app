@@ -3,13 +3,6 @@ from flask_login import UserMixin
 from werkzeug.security import check_password_hash
 from datetime import datetime , timezone 
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     try:
-#         return User.query.get(user_id)
-#     except:
-#         return None
-
 db = SQLAlchemy()
 
 class User(db.Model, UserMixin):
@@ -21,8 +14,8 @@ class User(db.Model, UserMixin):
   role = db.Column(db.String(10), nullable = False)
   status = db.Column(db.String(10), default='active')
 
-  student_profile = db.relationship('Student', backref = 'user', uselist = False, cascade = 'all, delete-orphan')
-  company_profile = db.relationship('Company', backref = 'user', uselist = False, cascade = 'all, delete-orphan')
+  student = db.relationship('Student', backref = 'user', uselist = False, cascade = 'all, delete-orphan')
+  company = db.relationship('Company', backref = 'user', uselist = False, cascade = 'all, delete-orphan')
 
 class Student(db.Model):
   __tablename__ = "student"
@@ -32,8 +25,9 @@ class Student(db.Model):
   age = db.Column(db.String(10) , nullable = False)
   department = db.Column(db.String(20), nullable=False)
   skills = db.Column(db.Text)
-  
 
+  apps = db.relationship('Application', backref='student')
+  
 class Company(db.Model):
   __tablename__ = "company"
   id = db.Column(db.Integer , primary_key = True)
@@ -41,9 +35,9 @@ class Company(db.Model):
   name = db.Column(db.String(20), nullable = False)
   hr_contact = db.Column(db.String(10) , nullable = False)
   website = db.Column(db.String(20), nullable=False)
-  status = db.Column(db.String(10), default='active')
+  status = db.Column(db.String(10), default='pending')
 
-
+  drive = db.relationship('Drive', backref='company')
 
 class Drive(db.Model):
   __tablename__ = "drive"
@@ -58,21 +52,15 @@ class Drive(db.Model):
 
   company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'))
 
-  company = db.relationship('Company', backref='drive')
-
-  # job = db.relationship('Job', backref='drive', uselist=False, lazy=True, cascade="all, delete-orphan")
-
 class Application(db.Model):
   __tablename__ = "applications"
   id = db.Column(db.Integer , primary_key = True)
-  drive_id = db.Column(db.Integer, db.ForeignKey('drive.id'), nullable = False)
-  # job_id = db.Column(db.Integer, db.ForeignKey('jobs.id', ondelete='CASCADE'))
+  drive_id = db.Column(db.Integer, db.ForeignKey('drive.id', ondelete='CASCADE'), nullable = False)
   student_id = db.Column(db.Integer, db.ForeignKey('student.id', ondelete='CASCADE'), nullable=False)
   description = db.Column(db.String(10) , nullable = False)
-  date = db.Column(db.DateTime, nullable=False)
+  date = db.Column(db.DateTime, nullable=False) 
   status = db.Column(db.String(20), nullable=False, default='pending')
 
-  student = db.relationship('Student', backref='applications')
   drive = db.relationship('Drive', backref='applications')
 
   __table_args__ = (db.UniqueConstraint('drive_id', 'student_id', name='_job_student_uc'),)

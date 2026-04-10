@@ -16,7 +16,7 @@ def company_register():
         password = request.form['Password']
         website = request.form['Website']
 
-        user = User(name=name, password_hash=password, username=username, role='company', status='active')
+        user = User(name=name, password_hash=password, username=username, role='company', status='pending')
         db.session.add(user)
         db.session.flush()
 
@@ -27,7 +27,8 @@ def company_register():
         flash(f'Account created for {name} with Username {username}!', 'success')
         login_user(user)
 
-        return redirect(url_for('company.company_dashboard'))
+        flash('You can Login when Approved by Admin','success')
+        return redirect(url_for('home'))
     return render_template('register/company.html')
         
 @company.route('/company_login', methods=['GET', 'POST'])
@@ -50,26 +51,19 @@ def company_login():
         else:
             return render_template('error.html', 
             message="Username not Found. First Register Yourself", 
-            retry_url=url_for('company.company_register'),
-            retry_url2 = url_for('company.company_login'))
+            retry_url=url_for('company.company_register'))
 
-    # else:
-    #     flash('You are not authorized to access this page.', 'danger')
-    #     return redirect(url_for('home'))
-
-    return render_template('login/company.html')
+    else:
+        return render_template('login/company.html')
         
 @company.route('/company_dashboard', methods=['GET','POST'])
 @login_required
 def company_dashboard():
-    if current_user.role == 'company' and current_user.status == 'active':
+    if current_user.role == 'company' and current_user.status == 'active' :
 
-        active_drive = Drive.query.filter(Drive.company_id == current_user.id , Drive.status == 'active').all()
-        pending_drive = Drive.query.filter(Drive.company_id == current_user.id , Drive.status == 'pending').all()
-        closed_drive = Drive.query.filter(Drive.company_id == current_user.id, Drive.status == 'closed').all()
-        # for drive in active_drive:
-
-        #     print(drive.title, pending_drive, closed_drive)
+        active_drive = Drive.query.filter(Drive.company_id == current_user.company.id , Drive.status == 'active').all()
+        pending_drive = Drive.query.filter(Drive.company_id == current_user.company.id , Drive.status == 'pending').all()
+        closed_drive = Drive.query.filter(Drive.company_id == current_user.company.id, Drive.status == 'closed').all()
 
         return render_template('company/dashboard.html',
             active_drive=active_drive,
@@ -143,7 +137,7 @@ def new_drive():
                 salary = int(request.form['Salary'])
 
                 now = datetime.now(timezone.utc)
-                new_drive = Drive(title=title, description=description,eligibility=eligibility,salary=salary,deadline= now + timedelta(days=duration), company_id=current_user.id)
+                new_drive = Drive(title=title, description=description,eligibility=eligibility,salary=salary,deadline= now + timedelta(days=duration), company_id=current_user.company.id)
                 db.session.add(new_drive)
                 db.session.commit()
 

@@ -8,15 +8,17 @@
     <div class="d-flex align-items-center p-3">
       <h2 class="d-flex justify-content-start">Welcome {{ current_user.name }}! </h2>
       <div class="d-flex justify-content-end align-items-center ms-auto">
-        <a href="{{ url_for('student.edit_profile')}}"
-          class="p-2 m-2 border border-2 rounded btn-outline-primary">Edit Profile</a>
+        <a href="{{ url_for('student.edit_profile', stu_id=current_user.id)}}"
+          class="p-2 m-2 btn btn-outline-info fw-bold w-100">Edit
+          Profile</a>
+
         <a href="{{ url_for('student.student_history', stu_id=current_user.id)}}"
-          class="p-2 m-2 border border-2 rounded btn-outline-primary">History</a>
-        <a href="{{ url_for('student.logout')}}" class="p-2 m-2 border border-2 rounded btn-outline-primary">Logout</a>
+          class="p-2 m-2 btn btn-outline-warning">History</a>
+        <a href="{{ url_for('student.logout')}}" class="p-2 m-2 btn btn-outline-danger fw-bold w-100">Logout</a>
       </div>
     </div>
 
-    {% if companies %}
+    <h2 class="fw-bold fs-2">Running Drives</h2>
     <table class="container-sm table table-striped border border-3 rounded">
       <thead>
         <tr>
@@ -24,7 +26,7 @@
           <th>Website</th>
         </tr>
       </thead>
-
+      {% if companies %}
       {% for company in companies %}
       <tbody>
         <tr>
@@ -44,7 +46,7 @@
     </table>
     {% endif %}
 
-
+    <h2 class="fw-bold fs-2">Applied Drives</h2>
     <table class="container-sm table table-striped border border-3 rounded">
       <thead>
         <tr>

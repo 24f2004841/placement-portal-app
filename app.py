@@ -20,8 +20,6 @@ app.register_blueprint(admin_routes)
 app.register_blueprint(student_routes)
 app.register_blueprint(company)
 
-
-
 @app.route('/')
 def home():
   return render_template('index.html')

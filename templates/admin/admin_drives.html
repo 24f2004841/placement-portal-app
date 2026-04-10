@@ -4,86 +4,125 @@
 
 <div class="text-center">
   <h2 class="my-4 fs-1 fw-bold mb-5">All Drives</h2>
+  <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary btn-sm">back</a>
   {% if current_user.is_authenticated %}
   <h2> Pending Drives </h2>
-     {% if pending_drives %}
-      <table class="table table-striped border border-3 rounded my-3">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title </th>
-            <th>Eligibility</th>
-            <th>Deadline</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
+  {% if pending_drives %}
+  <table class="table table-striped border border-3 rounded my-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title </th>
+        <th>Eligibility</th>
+        <td>Company Name</td>
+        <th>Deadline</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
 
-        {% for drive in pending_drives %}
-        <tbody>
-          <tr>
-            <td>{{ drive.id }}</td>
-            <td>{{ drive.title }}</td>
-            <td>{{ drive.eligibility }}</td>
-            <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p')  }}</td>
-            <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p') }}</td>
-            <td>
-              <form action="{{ url_for('admin.approve_drive', drive_id=drive.id) }}" method="POST">
-                <button type="submit" class="btn btn-success fw-bold rounded">
-                  <i class="fa fa-ban" aria-hidden="true"></i>
-                  Approve
-                </button>
-              </form>
-            </td>
-            <td>
-              <form action="{{ url_for('admin.reject_drive', drive_id=drive.id) }}" method="POST">
-                <button type="submit" class="btn btn-danger fw-bold rounded">
-                  <i class="fa fa-ban" aria-hidden="true"></i>
-                  Reject
-                </button>
-              </form>
-            </td>
+    {% for drive in pending_drives %}
+    <tbody>
+      <tr>
+        <td>{{ drive.id }}</td>
+        <td>{{ drive.title }}</td>
+        <td>{{ drive.eligibility }}</td>
+        <td>{{ drive.company.name }}</td>
+        <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>
+          <form action="{{ url_for('admin.approve_drive', drive_id=drive.id) }}" method="POST">
+            <button type="submit" class="btn btn-success fw-bold rounded">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              Approve
+            </button>
+          </form>
+        </td>
+        <td>
+          <form action="{{ url_for('admin.reject_drive', drive_id=drive.id) }}" method="POST">
+            <button type="submit" class="btn btn-danger fw-bold rounded">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              Reject
+            </button>
+          </form>
+        </td>
 
-          </tr>
-        </tbody>
-        {% endfor %}
-      </table>
-      {% endif %}
+      </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+  {% endif %}
 
   <h2> Ongoing Drives </h2>
-     {% if ongoing_drives %}
-      <table class="table table-striped border border-3 rounded my-3">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title </th>
-            <th>Eligibility</th>
-            <th>Deadline</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
+  <table class="table table-striped border border-3 rounded my-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title </th>
+        <th>Eligibility</th>
+        <th>Company Name</th>
+        <th>Deadline</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    {% if ongoing_drives %}
+    {% for drive in ongoing_drives %}
+    <tbody>
+      <tr>
+        <td>{{ drive.id }}</td>
+        <td>{{ drive.title }}</td>
+        <td>{{ drive.eligibility }}</td>
+        <td>{{ drive.company.name }}</td>
+        <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>
+          <form action="{{ url_for('admin.delete_drive', drive_id=drive.id) }}" method='POST'>
+            <button type="submit" class="btn btn-dark fw-bold rounded">
+              Close
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="5" class="m-2 p-3 text-center fs-3 fw-bolder">No Data to show</td>
+      </tr>
+    </tbody>
+    {% endif %}
+  </table>
 
-        {% for drive in ongoing_drives %}
-        <tbody>
-          <tr>
-            <td>{{ drive.id }}</td>
-            <td>{{ drive.title }}</td>
-            <td>{{ drive.eligibility }}</td>
-            <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p')  }}</td>
-            <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p')  }}</td>
-            <td>
-              <form action="{{ url_for('admin.delete_drive', drive_id=drive.id) }}" method="POST">
-                <button type="submit" class="btn btn-dark fw-bold rounded">
-                  <i class="fa fa-ban" aria-hidden="true"></i>
-                  Delete
-                </button>
-              </form>
-            </td>
-          </tr>
-        </tbody>
-        {% endfor %}
-      </table>
+  <div class="container">
+    <h2> Closed Drives </h2>
+    <table class="table table-striped border border-3 rounded my-3">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title </th>
+          <th>Eligibility</th>
+          <th>Company Name</th>
+          <th>Deadline</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+      {% if closed_drives %}
+      {% for drive in closed_drives %}
+      <tr>
+        <td>{{ drive.id }}</td>
+        <td>{{ drive.title }}</td>
+        <td>{{ drive.eligibility }}</td>
+        <td>{{ drive.company.name }}</td>
+        <td>{{ drive.deadline.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>{{ drive.date.strftime('%d %b %Y, %I:%M %p') }}</td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr>
+        <td colspan="5" class="m-2 p-3 text-center fs-3 fw-bolder">No Data to show</td>
+      </tr>
       {% endif %}
+    </table>
+  </div>
+
   {% endif %}
 </div>
-
 {% endblock %}

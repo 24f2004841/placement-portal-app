@@ -2,8 +2,9 @@
 
 {% block body %}
 
-<div class="centered-form">
-  <h2 class="text-center mb-4">Edit Profile</h2>
+<div class="centered-form m-2">
+  <h2 class="text-center mb-4 fs-1 fw-bold m-2">Edit Profile</h2>
+  <a href="{{ url_for('student.student_dashboard') }}" class="btn btn-outline-secondary btn-sm">back</a>
   <form method="post">
     <div class="mb-3">
       <label for="age" class="form-label">Age</label>
@@ -20,10 +21,9 @@
     </div>
     <div class="mb-3">
       <label for="skills" class="form-label">Skills</label>
-      <textarea id="skills" class="form-control" name="Skills" rows="2"
-        placeholder="e.g. Python, Java, SQL"></textarea>
+      <textarea id="skills" class="form-control" name="Skills" rows="2" placeholder="e.g. Python, Java, SQL"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
+    <button type="submit" class="btn btn-primary">Update</button>
   </form>
 </div>
 

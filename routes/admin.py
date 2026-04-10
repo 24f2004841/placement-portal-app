@@ -42,13 +42,11 @@ def admin_dashboard():
         'cp': User.query.filter_by(role='company', status='pending').count(),
     }
 
-    VISIBLE_STATUSES = ['active', 'warning']
-
-    def fetch_users(role, query=None):
-        base = User.query.filter(User.role == role, User.status.in_(VISIBLE_STATUSES))
+    def fetch_company(query=None):
+        base = Company.query.filter(Company.status == 'active')
         if query:
             base = base.filter(or_(
-                User.name.ilike(f'%{query}%'),
+                Company.name.ilike(f'%{query}%'),
                 cast(User.id, String).ilike(f'%{query}%')
             ))
         return base.all()
@@ -60,27 +58,73 @@ def admin_dashboard():
 
     if search_query : 
 
-      company_list = fetch_users('company', search_query)
+      company_list = fetch_company(search_query)
       drive_list   = fetch_drives(search_query)
+      stu_count = Student.query.count()
+      com_count = Company.query.count()
+      drive_count = Drive.query.count()
+      app_count = Application.query.count()
 
     else : 
       company_list = Company.query.filter_by(status='active')
+      stu_count = Student.query.count()
+      com_count = Company.query.count()
+      drive_count = Drive.query.count()
+      app_count = Application.query.count()
   
   return render_template(
       'admin/dashboard.html',
       **stats,
       companies=company_list,
-      search_query=search_query
+      search_query=search_query,
+      stu_count=stu_count,
+      com_count  = com_count,
+      drive_count = drive_count,
+      app_count = app_count
   )
 
+@admin_routes.route('/all_students', methods=['GET','POST'])
+def all_students():
+  if current_user.role == 'admin':
+
+    search_query = request.args.get('q', '').strip()
+
+    stats = {
+        'cc': User.query.filter_by(role='company').count(),
+        'sc': User.query.filter_by(role='student').count(),
+        'cb': User.query.filter_by(role='company', status='blacklisted').count(),
+        'sb': User.query.filter_by(role='student', status='blacklisted').count(),
+        'cp': User.query.filter_by(role='company', status='pending').count(),
+    }
+
+    def fetch_student(query=None):
+        base = Student.query.filter(Student.user.has(status='active'))
+        if query:
+            base = base.filter(or_(
+                Student.name.ilike(f'%{query}%'),
+                cast(Student.user_id, String).ilike(f'%{query}%')
+            ))
+        return base.all()
+
+    if search_query:
+      students = fetch_student(search_query)
+
+    else:
+      students = Student.query.all()
+
+    return render_template('admin/total_students.html', students=students)
+
+  else:
+    flash('You are authorized to access this page', 'danger')
+    return redirect(url_for('app'))
 
 @admin_routes.route('/job_applications', methods=['GET', 'POST'])
 def job_applications():
   if current_user.role == 'admin':
 
-    applications = Applications.query.all()
+    applications = Application.query.all()
 
-    return render_template('admin/job_applications.html', applications=applications)
+    return render_template('admin/job_application.html', applications=applications)
 
   else:
     flash('You are authorized to access this page', 'danger')
@@ -95,7 +139,7 @@ def approve_job_application(app_id):
       db.session.commit()
 
 
-      return render_template('admin/job_applications.html')
+      return redirect(url_for('admin.admin_drive'))
 
   else:
     flash('You are authorized to access this page', 'danger')
@@ -109,7 +153,7 @@ def reject_job_application(app_id):
     app.status = 'rejected'
     db.session.commit()
 
-    return render_template('admin/job_applications.html')
+    return redirect(url_for('admin.admin_drive'))
 
   else:
     flash('You are authorized to access this page', 'danger')
@@ -130,8 +174,9 @@ def pending_companies():
 @admin_routes.route('/approve_company/<int:user_id>', methods=['POST'])
 def approve_company(user_id):
   if current_user.role == 'admin':
-    user = Company.query.get(user_id)
+    user = User.query.get(user_id)
     user.status = 'active'
+    user.company.status = 'active'
     db.session.commit()
 
     return redirect(url_for("admin.pending_companies"))
@@ -160,12 +205,16 @@ def admin_drive():
   if current_user.role == 'admin':
     pending_drives = Drive.query.filter_by(status='pending')
     ongoing_drives = Drive.query.filter_by(status='active')
+    closed_drives = Drive.query.filter_by(status = 'closed')
     
+    return render_template('admin/admin_drives.html', 
+    pending_drives = pending_drives, 
+    ongoing_drives = ongoing_drives,
+    closed_drives = closed_drives)
+
   else:
       flash('You are not authorized to access this page.', 'danger')
-      return redirect(url_for('app'))
-
-  return render_template('admin/admin_drives.html', pending_drives = pending_drives, ongoing_drives = ongoing_drives)
+      return redirect(url_for('home'))
 
 @admin_routes.route('/approve_drive/<int:drive_id>', methods=['GET', 'POST'])
 @login_required
@@ -178,52 +227,68 @@ def approve_drive(drive_id):
     db.session.commit()
 
     return redirect(url_for('admin.admin_drive'))
+  
+  else:
+      flash('You are not authorized to access this page.', 'danger')
+      return redirect(url_for('home'))
 
 @admin_routes.route('/reject_drive/<int:drive_id>', methods=['GET', 'POST'])
-@login_required
 def reject_drive(drive_id):
   if current_user.role == 'admin':
-    drive = Drive.query.filter_by(id = drive_id)
-    drive.status = 'rejected'
+    drive = Drive.query.get(drive_id)
+    drive.status = 'closed'
     db.session.commit()
 
-    return redirect(url_for('/admin.admin_drive'))
+    return redirect(url_for('admin.admin_drive'))
+  
+  else:
+      flash('You are not authorized to access this page.', 'danger')
+      return redirect(url_for('home'))
 
 @admin_routes.route('/delete_drive/<int:drive_id>', methods=['GET', 'POST'])
-@login_required
 def delete_drive(drive_id):
   if current_user.role == 'admin':
     drive = Drive.query.filter_by(id = drive_id)
-    db.session.delete(drive)
+    drive.status = 'closed'
+    db.session.commit()
+    
+    return redirect(url_for('admin.admin_drive'))
 
-    return redirect(url_for('/admin.admin_drive'))
+  else:
+      flash('You are not authorized to access this page.', 'danger')
+      return redirect(url_for('home'))
 
-
-@admin_routes.route('/blacklist/<int:com_id>', methods=['POST'])
-@login_required
-def admin_blacklist(com_id):
+@admin_routes.route('/blacklist/<int:user_id>', methods=['POST'])
+def admin_blacklist(user_id):
     if current_user.role == 'admin':
-        # user = User.query.get(user_id)
-        company = Company.query.get(com_id)
-        company.status = 'blacklist'
-        # user.status = 'blacklisted'
+        users = User.query.get(int(user_id))
+        if users.role == 'company':
+          company = Company.query.filter_by(user_id=user_id).first()
+          users.status = 'blacklist'
+          company.status = 'blacklist'
+          flash(f'{company.name} has been blacklisted! And all the drives has deleted', 'dark')
 
-        db.session.commit()
-        drives = Drive.query.filter_by(company_id=user.id).all()
-        for drive in drives :
-            db.session.delete(drive)
+          drives = Drive.query.filter_by(company_id=company.id).all()
+          for drive in drives:
+              Application.query.filter_by(drive_id=drive.id).delete()
+              db.session.delete(drive)
 
-        if user.role == 'student':
-            flash(f'Student {user.name} has been blacklisted!', 'dark')
-            
-        elif user.role == 'company':
-            flash(f'Company {user.name} has been blacklisted!', 'dark')
-            
+        elif users.role == 'student':
+          stu = Student.query.filter_by(user_id=user_id).first()
+          users.status = 'blacklist'
+          flash(f'Student {stu.name} has been blacklisted!', 'dark')
+
         db.session.commit()
         return redirect(url_for('admin.admin_dashboard'))
         
     else:
         flash('You are not authorized to access this page.', 'danger')
-        return redirect(url_for('app'))
+        return redirect(url_for('home'))
 
+
+@admin_routes.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 

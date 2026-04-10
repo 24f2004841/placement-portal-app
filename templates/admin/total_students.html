@@ -1,0 +1,67 @@
+{% extends 'base.html'%}
+
+{% block body%}
+{% if current_user.is_authenticated %}
+
+<div class="row mt-4">
+  <div class="col-8 ms-auto">
+
+    <form method="GET" action="{{ url_for('admin.all_students') }}" class="d-flex">
+      <input type="text" name="q" class="form-control me-2" placeholder="Search companies, students, or drives..."
+        value="{{ search_query }}">
+
+      <button type="submit" class="btn btn-primary">Search</button>
+
+      {% if search_query %}
+      <a href="{{ url_for('admin.all_students') }}" class="btn btn-outline-secondary ms-2">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+{% if search_query %}
+<div class="alert alert-info">
+  Showing results for "<strong>{{ search_query }}</strong>"
+</div>
+{% endif %}
+
+<div class="text-center row justify-content-between align-items-center my-3">
+  <h2 class="text-center fw-bold text-muted rounded p-1 mt-2">Total Students</h2>
+  <table class="table table-striped border border-3 rounded">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Department</th>
+        <th>Skills</th>
+      </tr>
+    </thead>
+    {% if students %}
+    {% for student in students %}
+    <tbody>
+      <tr>
+        <td>{{ student.user_id }}</td>
+        <td>{{ student.name }}</td>
+        <td>{{ student.age }}</td>
+        <td>{{ student.department }}</td>
+        <td>{{ student.skills }}</td>
+        <td>
+          <form action="{{ url_for('admin.admin_blacklist', user_id=student.user_id) }}" method="POST">
+            <button type="submit" class="btn btn-dark fw-bold rounded">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              Blacklist
+            </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+    {% else%}
+    <div class="fs-1 fw-bold"> No Data to Show </div>
+    {% endfor %}
+  </table>
+
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
