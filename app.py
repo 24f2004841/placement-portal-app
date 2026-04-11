@@ -1,7 +1,6 @@
 from flask import Flask , render_template
 from flask_login import LoginManager
 from models import db, User
-from seed import create_db
 
 from routes.admin import admin_routes
 from routes.student import student_routes
@@ -38,7 +37,6 @@ def create_admin():
 if __name__ == "__main__":
   with app.app_context():
     db.create_all()
-    create_db()
     if not User.query.filter_by(username='admin@mail.com').first():
       create_admin()
   app.run(debug = True)

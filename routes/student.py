@@ -116,7 +116,7 @@ def student_apply(drive_id):
         check = Application.query.filter_by(student_id=stu_id, drive_id=drive_id).first()
         if not check :
             date = datetime.now(timezone.utc)
-            db.session.add(Application(student_id=stu_id, drive_id=drive_id,date=date,description='interested'))
+            db.session.add(Application(student_id=stu_id, drive_id=drive_id,date=date,description='in-person'))
             db.session.commit()
 
             flash('Applied to Drive Successfully','success')

@@ -84,7 +84,8 @@ def company_dashboard():
 @company.route('/company/drive/<int:drive_no>', methods=['GET','POST'])
 @login_required
 def company_drive(drive_no):
-    if current_user.id == Drive.query.get(drive_no).company_id:
+    print(int(current_user.company.id), int(Drive.query.get(drive_no).company_id))
+    if current_user.company.id == Drive.query.get(drive_no).company_id:
 
         applications = Application.query.filter( Application.drive_id == drive_no)
         drive = Drive.query.get(drive_no )
@@ -98,7 +99,7 @@ def company_drive(drive_no):
 @company.route('/company/drive/<int:drive_id>/application', methods=['GET','POST'])
 @login_required
 def company_view_application(drive_id):
-    if current_user.id == Drive.query.get_or_404(drive_id).company_id:
+    if current_user.company.id == Drive.query.get_or_404(drive_id).company_id:
 
         application_id = request.args.get('application_id')
         application = Application.query.filter_by(id=application_id, drive_id=drive_id).first()
