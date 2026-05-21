@@ -139,7 +139,7 @@ There are no external API integrations in this project. The “API” surface is
 - `/company/drive/<drive_id>/application`
 - `/company/update_application/<application_id>`
 - `/company/new_drive`
-- `/company/drive/<drive_no>` (close-drive handler is defined here, though the route is duplicated)
+- `/company/drive/<drive_no>` (the file also defines a second handler with the same route pattern)
 
 ### Admin endpoints
 - `/admin_dashboard`
@@ -173,5 +173,5 @@ The application is mostly connected through:
 
 ## Notes
 - The app uses plain form submissions and server-side redirects, not a REST or JSON API.
-- Authentication is handled with Flask-Login, but passwords are stored inconsistently in the current codebase.
+- Authentication is handled with Flask-Login, but password handling is inconsistent across routes (some compare raw values while others import hashing helpers).
 - Some route names and handlers are duplicated or loosely coupled, so the project is best understood as a role-based portal rather than a layered service architecture.
